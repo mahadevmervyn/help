@@ -1,11 +1,6 @@
 from card import Card
 from constants import Constants
 
-class Node:
-    def __init__(self, card: Card):
-        self.card = card
-        self.next = None
-
 class Player:
     def __init__(self, name: str, position: int) -> None:
         """
@@ -17,14 +12,10 @@ class Player:
 
         Returns:
             None
-
-        Complexity:
-            Best Case Complexity: O(1)
-            Worst Case Complexity: O(1)
         """
         self.name = name
         self.position = position
-        self.hand = None  # first node of  linked list
+        self.hand = None  # first card of linked list
         self._size = 0    # to keep track of the number of cards
 
     def add_card(self, card: Card) -> None:
@@ -41,24 +32,23 @@ class Player:
             Best Case Complexity: O(1) - when inserting at the beginning
             Worst Case Complexity: O(n) - when inserting at the end, where n is the number of cards in hand
         """
-        new_node = Node(card)
+        new_card = card
         
-        if self.hand is None or (card.color.value < self.hand.card.color.value or 
-                            (card.color == self.hand.card.color and 
-                             card.label.value < self.hand.card.label.value)):
-            new_node.next = self.hand
-            self.hand = new_node
+        if self.hand is None or (card.color.value < self.hand.color.value or 
+                            (card.color == self.hand.color and 
+                             card.label.value < self.hand.label.value)):
+            new_card.next = self.hand
+            self.hand = new_card
         else:
             current = self.hand
-            while current.next and (current.next.card.color.value < card.color.value or
-                                    (current.next.card.color == card.color and
-                                    current.next.card.label.value <= card.label.value)):
+            while current.next and (current.next.color.value < card.color.value or
+                                    (current.next.color == card.color and
+                                    current.next.label.value <= card.label.value)):
                 current = current.next
-            new_node.next = current.next
-            current.next = new_node
+            new_card.next = current.next
+            current.next = new_card
         
         self._size += 1
-        return None
 
     def play_card(self, index: int) -> Card:
         """
@@ -78,13 +68,13 @@ class Player:
             raise IndexError("Index out of range")
         
         if index == 0:
-            card = self.hand.card
+            card = self.hand
             self.hand = self.hand.next
         else:
             current = self.hand
             for _ in range(index - 1):
                 current = current.next
-            card = current.next.card
+            card = current.next
             current.next = current.next.next
         
         self._size -= 1
@@ -127,4 +117,4 @@ class Player:
         current = self.hand
         for _ in range(index):
             current = current.next
-        return current.card
+        return current
